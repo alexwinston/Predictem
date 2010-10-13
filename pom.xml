@@ -1,5 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>alexwinston</groupId>
 	<artifactId>predictem</artifactId>
@@ -43,20 +44,6 @@
 			<groupId>org.atmosphere</groupId>
 			<artifactId>atmosphere-jersey</artifactId>
 			<version>0.6.3</version>
-			<!--exclusions>
-				<exclusion>
-					<groupId>org.atmosphere</groupId>
-					<artifactId>atmosphere-compat-jbossweb</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.atmosphere</groupId>
-					<artifactId>atmosphere-compat-tomcat</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.atmosphere</groupId>
-					<artifactId>atmosphere-compat-weblogic</artifactId>
-				</exclusion>
-			</exclusions-->
 		</dependency>
 	</dependencies>
 	<build>
@@ -69,6 +56,11 @@
 					<source>1.6</source>
 					<target>1.6</target>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>7.1.6.v20100715</version>
 			</plugin>
 		</plugins>
 	</build>
