@@ -3,9 +3,10 @@
 <meta name="viewport" content="width=320;" />
 <!--link media="screen" rel="stylesheet" href="css/facebox.css" /-->
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-<script type="text/javascript" src="js/jquery.atmosphere-min.js"></script>
+<script type="text/javascript" src="js/jquery.atmosphere.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
+	// Subscribe to the atmosphere broadcaster
 	$.atmosphere.subscribe(document.location.toString() + "rs/game/1234", callback, //null);
 			$.atmosphere.request = { transport: "websocket", fallbackTransport: "long-polling" });
 	function callback(response) {
@@ -16,21 +17,54 @@ $(document).ready(function() {
 		}
 	}
 
-	$("#create").click(function() {
+	// Click handler to submit the question
+	$("#questionSubmit").click(function() {
+		/* Example data
+		var data = {
+				name: $("#name").val(),
+				status: $("#status").val(),
+				pages: parseInt($("#pages").val()) };
+		JSON.stringify(data)
+		*/
+		
 		$.atmosphere.response.push(document.location.toString() + "rs/game/1234", null,
-				$.atmosphere.request = { data: "message='" + $("#game").val() + "'" });
-		});
+				$.atmosphere.request = { data: "message='" + $("#question").val() + "'" });
+
+		alert("Question submitted");
+	});
+	// Click handler to add and remove answers
+	$("#answerAdd").click(function() {
+		// Clone the answer template and set the attributes and click handler
+		var answer = $("#answerTemplate").clone();
+		answer.find("#answer").text($("#answerInput").val());
+		answer.find("#answerRemove").click(function() {
+			$(this).parent().remove(); });
+		answer.show();
+		
+		// Prepend the answer to the list
+		$("#answers").prepend(answer);
+		
+		// Clear the answer input text
+		$("#answerInput").val("");
+	});
 });
 </script>
 </head>
 <body>
-	<input id="game" type="text">
-	<input id="create" type="button" value="Create">
-	<ul></ul>
-	<div style="display: none">
-		<div id="hello_div" style="padding: 10px; background: #fff;">
-			<p><strong id="hello_text"></strong></p>
-		</div>
+	<div>
+		<input id="question" type="text">?
+		<input id="questionSubmit" type="button" value="Submit">
 	</div>
+	<div id="answerTemplate" style="display:none;">
+		<span id="answer"></span>
+		<input id="answerRemove" type="button" value="-">
+	</div>
+	<div>
+		<input id="answerInput" type="text">
+		<input id="answerAdd" type="button" value="+">
+	</div>
+	<div id="answers">
+	</div>
+	<ul></ul>
 </body>
 </html>
