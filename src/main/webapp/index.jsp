@@ -6,9 +6,9 @@
 <script type="text/javascript" src="js/jquery.atmosphere.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-	// Subscribe to the atmosphere broadcaster
+	// Subscribe to the atmosphere game broadcaster
 	$.atmosphere.subscribe(document.location.toString() + "rs/game/1234", callback, //null);
-			$.atmosphere.request = { transport: "websocket", fallbackTransport: "long-polling" });
+			$.atmosphere.request = { transport: "long-polling", fallbackTransport: "websocket" });
 	function callback(response) {
 		var data = response.responseBody
 		

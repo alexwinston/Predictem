@@ -12,16 +12,16 @@ import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.jersey.Broadcastable;
 
 
-@Path("/game")
+@Path("/game/{id}")
 public class GameResource {
 	private @PathParam("id") Broadcaster game;
 	
-	@GET @Path("{id}") @Suspend(listeners={GameEventListener.class})
+	@GET @Suspend(listeners={GameEventListener.class})
 	public Broadcastable subscribe() {
 		return new Broadcastable(game);
 	}
 	
-	@POST @Path("{id}") @Broadcast
+	@POST @Broadcast
 	public Broadcastable publish(@FormParam("message") String message) {
 		return new Broadcastable(message + "\n", game);
     }

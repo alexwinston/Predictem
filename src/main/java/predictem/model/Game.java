@@ -1,11 +1,19 @@
 package predictem.model;
 
+import java.util.UUID;
+
 public class Game {
-	public final Property<String> id = new Property<String>();
-	public final Property<Integer> count = new Property<Integer>();
+	public final Property<String> id = new Property<String>("");
+	public final Property<String> description = new Property<String>("");
 	
-	public Game(String id) {
+	private Game() {}
+	
+	public Game(String description) {
+		this(UUID.randomUUID().toString(), description);
+	}
+	
+	public Game(String id, String description) {
 		this.id.set(id);
-		this.count.set(0);
+		this.description.set(description);
 	}
 }
