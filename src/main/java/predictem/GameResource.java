@@ -11,16 +11,17 @@ import org.atmosphere.annotation.Suspend;
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.jersey.Broadcastable;
 
-@Path("/game/{id}")
+
+@Path("/game")
 public class GameResource {
 	private @PathParam("id") Broadcaster game;
 	
-	@GET @Suspend(listeners={GameEventListener.class})
+	@GET @Path("{id}") @Suspend(listeners={GameEventListener.class})
 	public Broadcastable subscribe() {
 		return new Broadcastable(game);
 	}
 	
-	@POST @Broadcast
+	@POST @Path("{id}") @Broadcast
 	public Broadcastable publish(@FormParam("message") String message) {
 		return new Broadcastable(message + "\n", game);
     }
