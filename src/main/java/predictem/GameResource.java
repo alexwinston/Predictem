@@ -1,6 +1,5 @@
 package predictem;
 
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -22,7 +21,7 @@ public class GameResource {
 	}
 	
 	@POST @Broadcast
-	public Broadcastable publish(@FormParam("message") String message) {
-		return new Broadcastable(message + "\n", game);
+	public Broadcastable publish(String json) {
+		return new Broadcastable(json + "\n", game);
     }
 }
