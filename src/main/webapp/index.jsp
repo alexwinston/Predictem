@@ -13,7 +13,7 @@
 		$.predictem.subscribe("rs/game/1234", {
 			onReceived: function(data) {
 				$("ul").prepend($("<li></li>")
-						.text(" Message Received: " + data));
+						.text(" Message Received: " + data.question));
 			}});
 	
 		// Click handler to submit the question

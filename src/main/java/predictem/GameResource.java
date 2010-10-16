@@ -22,6 +22,6 @@ public class GameResource {
 	
 	@POST @Broadcast
 	public Broadcastable publish(String json) {
-		return new Broadcastable(json + "\n", game);
+		return new Broadcastable(json, game);
     }
 }
