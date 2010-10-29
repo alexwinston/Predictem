@@ -16,14 +16,16 @@
 			<layout>default</layout>
 		</repository>
 		<repository>
-			<id>gson</id>
+			<id>oss.sonatype.org</id>
+			<name>Atmosphere SNAPSHOT Repository for Maven</name>
+			<url>http://oss.sonatype.org/service/local/repositories/snapshots/content</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>google-gson.googlecode.com</id>
+			<name>Gson Repository for Maven</name>
 			<url>http://google-gson.googlecode.com/svn/mavenrepo</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
+			<layout>default</layout>
 		</repository>
 	</repositories>
 	<dependencies>
@@ -57,7 +59,13 @@
 		<dependency>
 			<groupId>org.atmosphere</groupId>
 			<artifactId>atmosphere-jersey</artifactId>
-			<version>0.6.3</version>
+			<version>0.7-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.atmosphere</groupId>
+					<artifactId>atmosphere-ping</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 	<build>
