@@ -3,7 +3,7 @@ package predictem;
 import java.util.HashMap;
 import java.util.UUID;
 
-import javax.ws.rs.FormParam;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -49,7 +49,7 @@ public class GamesResource {
 	}
 	
 	@POST @Broadcast
-	public Broadcastable publish(@FormParam("game") String json) {
+	public Broadcastable publish(String json) {
 		// Create a UUID for the new game
 		System.out.println(json);
 		Game game = this.gson.fromJson(json, Game.class);
