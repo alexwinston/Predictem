@@ -3,7 +3,7 @@ jQuery.predictem = function() {
 		subscribe : function(url, subscriber) {
 			var callback = function(response) {
 				if (response.responseBody != "" && response.state != "error" && response.state != "messagePublished") {
-					subscriber.onReceived(JSON.parse(response.responseBody));
+					subscriber.received(JSON.parse(response.responseBody));
 				}
 			};
 				

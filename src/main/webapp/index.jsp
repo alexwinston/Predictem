@@ -2,16 +2,16 @@
 <head>
 	<meta name="viewport" content="width=320;" />
 	<!--link media="screen" rel="stylesheet" href="css/facebox.css" /-->
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-	<script type="text/javascript" src="js/jquery.atmosphere-min.js"></script>
-	<script type="text/javascript" src="js/jquery.predictem.js"></script>
-	<script type="text/javascript" src="js/jquery.tmpl-min.js"></script>
-	<script type="text/javascript" src="js/json2-min.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+	<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+	<script type="text/javascript" src="js/jquery.atmosphere-0.7.min.js"></script>
+	<script type="text/javascript" src="js/jquery.predictem-1.0.js"></script>
+	<script type="text/javascript" src="js/json2.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			// Subscribe to the atmosphere game broadcaster
 			$.predictem.subscribe("rs/game/1234", {
-				onReceived: function(data) {
+				received: function(data) {
 					$("ul").prepend($("<li></li>")
 							.text(" Message Received: " + data.question));
 				}});

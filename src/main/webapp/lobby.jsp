@@ -10,7 +10,7 @@
 	$(document).ready(function() {
 		// Subscribe to the atmosphere lobby broadcaster
 		$.predictem.subscribe("rs/games/lobby", {
-			onReceived: function(game) {
+			received: function(game) {
 				// Clone the game template and set the attributes and click handler
 				var gameTemplate = $("#gameTemplate").clone();
 				gameTemplate.find("#gameDescription").text(game.description);
