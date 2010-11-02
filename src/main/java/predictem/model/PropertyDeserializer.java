@@ -17,6 +17,6 @@ public class PropertyDeserializer implements JsonDeserializer<Property<?>> {
 		}
 		
 		// TODO Determine what a JsonObject actually is
-		return new Property(json.getAsJsonObject().getAsString());
+		return new Property<Object>(json.getAsJsonObject().getAsString());
 	}
 }
