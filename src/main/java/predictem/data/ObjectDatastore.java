@@ -8,16 +8,15 @@ import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
 
-public class EntityDatastore {
+public class ObjectDatastore {
+	private static EntityManagerFactory emf =
+		Persistence.createEntityManagerFactory("predictemPersistence");
 	
 	// Predict'em JPA EntityManager
 	private EntityManager em;
 	
-	public EntityDatastore() {
-		EntityManagerFactory emf =
-			Persistence.createEntityManagerFactory("predictemPersistence");
+	public ObjectDatastore() {
 		this.em = emf.createEntityManager();
-		//this.em.setProperty("objectdb.user.classes", new Class[] { PersistenceService.class });
 	}
 
 	public Account createAccount(Account account) {

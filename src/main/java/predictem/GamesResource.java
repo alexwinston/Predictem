@@ -6,14 +6,13 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 
 import org.atmosphere.annotation.Broadcast;
 import org.atmosphere.annotation.Suspend;
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.jersey.Broadcastable;
 
-import predictem.data.EntityDatastore;
+import predictem.data.ObjectDatastore;
 import predictem.data.Game;
 
 import com.google.gson.GsonBuilder;
@@ -21,10 +20,10 @@ import com.google.gson.GsonBuilder;
 @Path("/games")
 public class GamesResource {
 	
-	private EntityDatastore datastore;
+	private ObjectDatastore datastore;
 	
 	public GamesResource() {
-		this.datastore = new EntityDatastore();
+		this.datastore = new ObjectDatastore();
 	}
 	
 	@GET @Path("/{category}") @Suspend(listeners={GameEventListener.class}) @Produces("text/plain")

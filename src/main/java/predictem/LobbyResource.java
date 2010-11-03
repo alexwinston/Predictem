@@ -2,13 +2,13 @@ package predictem;
 
 import javax.ws.rs.Path;
 
-import predictem.data.EntityDatastore;
+import predictem.data.ObjectDatastore;
 
 @Path("/lobby")
 public class LobbyResource {
-	EntityDatastore datastore;
+	ObjectDatastore datastore;
 	
 	public LobbyResource() {
-		this.datastore = new EntityDatastore();
+		this.datastore = new ObjectDatastore();
 	}
 }

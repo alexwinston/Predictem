@@ -9,14 +9,15 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
 import predictem.data.Account;
-import predictem.data.EntityDatastore;
+import predictem.data.ObjectDatastore;
+import predictem.data.ObjectDatastoreMock;
 
 @Path("/account")
 public class AccountResource {
-	EntityDatastore datastore;
+	ObjectDatastore datastore;
 	
 	public AccountResource() {
-		this.datastore = new EntityDatastore();
+		this.datastore = new ObjectDatastore();
 	}
 	
 	@PUT @Path("/login") @Consumes(MediaType.APPLICATION_JSON)
