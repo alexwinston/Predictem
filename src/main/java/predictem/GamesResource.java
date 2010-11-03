@@ -1,8 +1,5 @@
 package predictem;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -16,54 +13,33 @@ import org.atmosphere.annotation.Suspend;
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.jersey.Broadcastable;
 
-import predictem.model.Game;
-import predictem.model.Property;
-import predictem.model.PropertyDeserializer;
-import predictem.model.PropertySerializer;
+import predictem.data.EntityDatastore;
+import predictem.data.Game;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-@Path("games/{id}")
+@Path("/games")
 public class GamesResource {
-	private Gson gson;
-	private static HashMap<String, Game> GAMES = new HashMap<String, Game>();
-	@PathParam("id") Broadcaster games;
 	
-	static {
-		GAMES.put("1", new Game("1", "Game 1"));
-		GAMES.put("2", new Game("2", "Game 2"));
-	}
+	private EntityDatastore datastore;
 	
 	public GamesResource() {
-		GsonBuilder gson = new GsonBuilder();
-		gson.registerTypeAdapter(Property.class, new PropertySerializer());
-		gson.registerTypeAdapter(Property.class, new PropertyDeserializer());
-		
-		this.gson = gson.create();
+		this.datastore = new EntityDatastore();
 	}
 	
-	@GET @Suspend(listeners={GameEventListener.class})
-	public Broadcastable subscribe() {
-		return new Broadcastable(this.games);
+	@GET @Path("/{category}") @Suspend(listeners={GameEventListener.class}) @Produces("text/plain")
+	public Broadcastable subscribe(@PathParam("category") Broadcaster category) {
+		return new Broadcastable(category);
 	}
 	
-	@POST @Broadcast
-	public Broadcastable publish(String json) {
-		// Create a UUID for the new game
-		System.out.println(json);
-		Game game = this.gson.fromJson(json, Game.class);
-		game.id.set(UUID.randomUUID().toString());
-		
-		// Persist the new game
-		GAMES.put(game.id.toString(), game);
-		
+	@POST @Path("/{category}") @Consumes("application/json") @Broadcast @Produces("text/plain")
+	public Broadcastable create(@PathParam("category") Broadcaster category, Game game) {
 		// Broadcast the creation of the new game
-		return new Broadcastable(this.gson.toJson(game), this.games);
+		return new Broadcastable(
+				new GsonBuilder().create().toJson(this.create(game)), category);
 	}
-
-	@GET @Path("recent") @Produces(MediaType.APPLICATION_JSON)
-	public String recent() {
-		return this.gson.toJson(GAMES.values());
+	
+	private Game create(Game game) {
+		return this.datastore.createGame(game);
 	}
 }

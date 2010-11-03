@@ -6,6 +6,9 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-app_3.0.xsd"> 
 
 	<display-name>Predict'em</display-name>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
 	<persistence-unit-ref>
 		<persistence-unit-ref-name>persistence/predictemPersistence</persistence-unit-ref-name>
 		<persistence-unit-name>predictemPersistence</persistence-unit-name>

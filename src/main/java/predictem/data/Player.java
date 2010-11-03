@@ -1,4 +1,4 @@
-package predictem.model;
+package predictem.data;
 
 import javax.persistence.Entity;
 

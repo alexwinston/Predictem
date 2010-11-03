@@ -1,39 +1,53 @@
 package predictem;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
+import javax.persistence.NoResultException;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.Response;
 
-import predictem.model.Player;
+import predictem.data.Account;
+import predictem.data.EntityDatastore;
 
 @Path("/account")
 public class AccountResource {
-	EntityManager em;
+	EntityDatastore datastore;
 	
 	public AccountResource() {
-		EntityManagerFactory emf =
-			Persistence.createEntityManagerFactory("predictemPersistence");
-		this.em = emf.createEntityManager();
+		this.datastore = new EntityDatastore();
 	}
 	
-	@POST
-	public void create(Player account) {
+	@PUT @Path("/login") @Consumes(MediaType.APPLICATION_JSON)
+	public Response login(Login login) {
+		try {
+			// Check to see if the email already exists
+			Account account = this.datastore.findAccountByEmailAndPassword(
+					login.getEmail(), login.getPassword());
+			
+			// Create a new cookie with the account uuid for future requests
+			return Response.status(200).cookie(new NewCookie("aid", account.getId())).build();
+		} catch (NoResultException e) {
+			// The email exists so return a 400 (Bad Request)
+			return Response.status(400).build();
+		}
 	}
 	
-	@GET @Path("exists/{email}") @Produces(MediaType.APPLICATION_JSON)
-	public String exists(@PathParam("email") String email) {
-		return "{ \"exists\": true }";
-	}
-	
-	@GET @Path("{id}") @Produces(MediaType.APPLICATION_JSON)
-	public Player get(@PathParam("id") String id) {
-		return new Player("email", "username", "password");
-		//this.em.createQuery("SELECT p FROM Player p WHERE p.id = :value", Player.class).getSingleResult()id;
+	@PUT @Path("/register") @Consumes(MediaType.APPLICATION_JSON)
+	public Response register(Account account) {
+		try {
+			// Check to see if the email already exists
+			this.datastore.findAccountByEmail(account.getEmail());
+		} catch (NoResultException e) {
+			// The email doesn't exist so create the new account
+			this.datastore.createAccount(account);
+			
+			// Create a new cookie with the account uuid for future requests
+			return Response.status(200).cookie(new NewCookie("aid", account.getId())).build();
+		}
+		
+		// The email exists so return a 400 (Bad Request)
+		return Response.status(400).build();
 	}
 }

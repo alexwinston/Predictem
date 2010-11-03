@@ -1,4 +1,4 @@
-package predictem.persistence;
+package predictem.data;
 
 import java.util.UUID;
 
@@ -7,15 +7,13 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
-import predictem.model.Account;
-import predictem.model.Game;
 
-public class PersistenceService {
+public class EntityDatastore {
 	
 	// Predict'em JPA EntityManager
 	private EntityManager em;
 	
-	public PersistenceService() {
+	public EntityDatastore() {
 		EntityManagerFactory emf =
 			Persistence.createEntityManagerFactory("predictemPersistence");
 		this.em = emf.createEntityManager();
