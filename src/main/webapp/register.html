@@ -1,0 +1,32 @@
+<html>
+	<head>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery.predictem-1.0.js"></script>
+		<script>
+			$(document).ready(function() {
+				$("#register").click(function() {
+					$.predictem.register($("#username").val(), $("#email").val(), $("#password").val(), {
+						success: function() { location.href = "lobby.html"; },
+						error: function() { alert("The email already exists"); }});
+				});
+				
+				$("#cancel").click(function() {
+					location.href = "index.html";
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div>
+			<ul style="text-align:center;">
+				<li><input id="username" type="text" value="Username"></li>
+				<li><input id="email" type="text" value="Email"></li>
+				<li><input id="password" type="text" value="Password"></li>
+			</ul>
+			<ul style="text-align:center;">
+				<li><input id="register" type="button" value="Create New Account"></li>
+				<li><input id="cancel" type="button" value="Cancel"></li>
+			</ul>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,48 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta name="viewport" content="width=320;" />
+		<!--link media="screen" rel="stylesheet" href="css/facebox.css" /-->
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery.atmosphere-0.7.js"></script>
+		<script type="text/javascript" src="js/jquery.predictem-1.0.js"></script>
+		<script type="text/javascript" src="js/json2.min.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				if (location.href.indexOf("#") != -1) {
+			        // Get the category from the supplied hashtag
+			    	var category = location.href.substr(location.href.indexOf("#") + 1);
+				
+					// Subscribe to the atmosphere lobby broadcaster
+					$.predictem.subscribe("rs/games/" + category, {
+						received: function(game) {
+							// Clone the game template and set the attributes and click handler
+							var gameTemplate = $("#gameTemplate").clone();
+							gameTemplate.find("#gameDescription").text(game.description);
+							gameTemplate.find("#gameJoin").click(function() { });
+							gameTemplate.show();
+							
+							// Prepend the answer to the list
+							$("#games").prepend(gameTemplate); }});
+				
+					// Click handler to add games
+					$("#gameCreate").click(function() {
+						$.predictem.publish("rs/games/" + category,
+								{ description: $("#game").val() });
+					});
+				}
+			});
+		</script>
+	</head>
+	<body>
+		<div>
+			<input id="game" type="text">
+			<input id="gameCreate" type="button" value="Create">
+		</div>
+		<div id="gameTemplate" style="display:none;">
+			<span id="gameDescription"></span>
+			<input id="gameJoin" type="button" value="Join">
+		</div>
+		<div id="games">
+		</div>
+	</body>
+</html>

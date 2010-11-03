@@ -1,0 +1,34 @@
+<html>
+	<head>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery.predictem-1.0.js"></script>
+		<script>
+			$(document).ready(function() {
+				$("#login").click(function() {
+					$.predictem.login($("#email").val(), $("#password").val(), {
+						success: function() { location.href = "lobby.html"; },
+						error: function() { alert("Invalid email or password"); }});
+				});
+				
+				$("#register").click(function() {
+					location.href = "register.html";
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div>
+			Predict'em game details and instructions about creating an account and logging in.
+		</div>
+		<div>
+			<ul style="border:1px solid blue; text-align:center;">
+				<li><input id="email" type="text" value="Email"></li>
+				<li><input id="password" type="text" value="Password"></li>
+			</ul>
+			<ul style="border:1px solid red; text-align:center;">
+				<li><input id="login" type="button" value="Sign In"></li>
+				<li><input id="register" type="button" value="Create New Account"></li>
+			</ul>
+		</div>
+	</body>
+</html>
