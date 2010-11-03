@@ -1,5 +1,6 @@
 package predictem.data;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.EntityManager;
@@ -57,5 +58,20 @@ public class ObjectDatastore {
 		this.em.getTransaction().commit();
 		
 		return game;
+	}
+	
+	public List<Game> findGamesByCategory(String category) {
+		return this.findGamesByCategory(category, 0, Integer.MAX_VALUE);
+	}
+	
+	public List<Game> findGamesByCategory(String category, int begin, int count) {
+		TypedQuery<Game> queryGamesByCategory =
+			this.em.createNamedQuery("findGamesByCategory", Game.class);
+		queryGamesByCategory.setParameter("category", category);
+		queryGamesByCategory.setFirstResult(begin);
+		if (count != Integer.MAX_VALUE)
+			queryGamesByCategory.setMaxResults(count);
+		
+		return queryGamesByCategory.getResultList();
 	}
 }

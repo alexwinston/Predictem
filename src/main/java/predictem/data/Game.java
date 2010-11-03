@@ -1,12 +1,19 @@
 package predictem.data;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+
+@NamedQueries ({
+	@NamedQuery(name="findGamesByCategory", query="SELECT g FROM Game g WHERE g.category = :category")
+})
 
 @Entity public class Game {
 	private String id;
 	private String category;
 	private String name;
 	private String description;
+	private int creationTimestamp;
 
 	public String getId() {
 		return this.id;
