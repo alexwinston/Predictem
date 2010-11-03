@@ -6,7 +6,7 @@
 		<script type="text/javascript" src="js/jquery.atmosphere-0.7.js"></script>
 		<script type="text/javascript" src="js/jquery.predictem-1.0.js"></script>
 		<script type="text/javascript">
-			function addGame(game) {
+			function prependGame(game) {
 				// Clone the game template and set the attributes and click handler
 				var gameTemplate = $("#gameTemplate").clone();
 				gameTemplate.find("#gameDescription").text(game.description);
@@ -25,13 +25,13 @@
 			        // Load the most recently created games
 			        $.getJSON("rs/games/" + category + "/list/0/10", function(games) {
           				$.each(games, function(i, game) {
-							addGame(game);
+          					prependGame(game);
           				});
         			});
 				
 					// Subscribe to the atmosphere lobby broadcaster
 					$.predictem.subscribe("rs/games/" + category + "/subscribe", {
-						received: function(game) { addGame(game); }});
+						received: function(game) { prependGame(game); }});
 				
 					// Click handler to add games
 					$("#gameCreate").click(function() {
