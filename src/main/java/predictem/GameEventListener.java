@@ -30,4 +30,9 @@ public class GameEventListener implements AtmosphereResourceEventListener {
 	public void onSuspend(AtmosphereResourceEvent<HttpServletRequest, HttpServletResponse> event) {
 		System.out.println("onSuspend: " + event);
 	}
+
+	@Override
+	public void onThrowable(Throwable throwable) {
+		// TODO Auto-generated method stub
+	}
 }
