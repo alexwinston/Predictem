@@ -5,7 +5,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 @NamedQueries ({
-	@NamedQuery(name="findGamesByCategory", query="SELECT g FROM Game g WHERE g.category = :category")
+	@NamedQuery(name="findGamesByCategory",
+			query="SELECT g FROM Game g WHERE g.category = :category ORDER BY g.creationDate DESC")
 })
 
 @Entity public class Game {
@@ -13,7 +14,7 @@ import javax.persistence.NamedQuery;
 	private String category;
 	private String name;
 	private String description;
-	private int creationTimestamp;
+	private long creationDate;
 
 	public String getId() {
 		return this.id;
@@ -45,5 +46,13 @@ import javax.persistence.NamedQuery;
 	
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public long getCreationDate() {
+		return this.creationDate;
+	}
+	
+	public void setCreationDate(long creationDate) {
+		this.creationDate = creationDate;
 	}
 }

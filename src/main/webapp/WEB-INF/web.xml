@@ -9,10 +9,6 @@
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
-	<persistence-unit-ref>
-		<persistence-unit-ref-name>persistence/predictemPersistence</persistence-unit-ref-name>
-		<persistence-unit-name>predictemPersistence</persistence-unit-name>
-   </persistence-unit-ref>
 	<servlet>
 		<load-on-startup>1</load-on-startup>
 		<servlet-name>atmosphere</servlet-name>
@@ -58,10 +54,6 @@
     		<param-name>org.atmosphere.cpr.CometSupport.maxInactiveActivity</param-name>
     		<param-value>30000</param-value>
 		</init-param-->
-		<init-param>
-    		<param-name>unit:predictemPersistence</param-name>
-    		<param-value>persistence/predictemPersistence</param-value>
-  		</init-param>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>atmosphere</servlet-name>

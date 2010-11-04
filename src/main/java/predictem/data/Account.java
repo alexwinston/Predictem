@@ -5,8 +5,10 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 @NamedQueries ({
-	@NamedQuery(name="findAccountByEmail", query="SELECT a FROM Account a WHERE a.email = :email"),
-	@NamedQuery(name="findAccountByEmailAndPassword", query="SELECT a FROM Account a WHERE a.email = :email AND a.password = :password")
+	@NamedQuery(name="findAccountByEmail",
+			query="SELECT a FROM Account a WHERE a.email = :email"),
+	@NamedQuery(name="findAccountByEmailAndPassword",
+			query="SELECT a FROM Account a WHERE a.email = :email AND a.password = :password")
 })
 
 @Entity public class Account {
@@ -14,6 +16,7 @@ import javax.persistence.NamedQuery;
 	private String email;
 	private String username;
 	private String password;
+	private long creationDate;
 	
 	private Account() {}
 	
@@ -39,11 +42,27 @@ import javax.persistence.NamedQuery;
 		this.email = email;
 	}
 	
+	public String getUsername() {
+		return this.username;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
 	public String getPassword() {
 		return this.password;
 	}
 	
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public long getCreationDate() {
+		return this.creationDate;
+	}
+	
+	public void setCreationDate(long creationDate) {
+		this.creationDate = creationDate;
 	}
 }

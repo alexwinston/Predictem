@@ -7,8 +7,8 @@
 		<script type="text/javascript" src="js/jquery.atmosphere-0.7.js"></script>
 		<script type="text/javascript" src="js/jquery.predictem-1.0.js"></script>
 		<script type="text/javascript">
-			function display(game) {
-				// Initialize the game template and set the attributes and click handler
+			function prependGame(game) {
+				// Clone the game template and set the attributes and click handler
 				$("#game-template")
 					.tmpl({ game: game })
 					.prependTo("#games")
@@ -18,32 +18,14 @@
 			
 			$(document).ready(function() {
 				if (location.href.indexOf("#") != -1) {
-			        // Get the category from the supplied hashtag
-			    	var category = location.href.substr(location.href.indexOf("#") + 1);
+			        // Get the game id from the supplied hashtag
+			    	var id = location.href.substr(location.href.indexOf("#") + 1);
 			        
-			        // Load the most recently created games
-			        $.getJSON("rs/games/" + category + "/list/0/10", function(games) {
-          				$.each(games.reverse(), function(i, game) {
-          					display(game);
-          				});
-        			});
+			        // Load the most recently created questions
 				
-					// Subscribe to the atmosphere lobby broadcaster
-					$.predictem.subscribe("rs/games/" + category + "/subscribe", {
-						received: display,
-						published: function(game) { location.href = "game.html#" + game.id; }});
-				
-					// Click handler to create games
-					$("#game #create").click(function() {
-						if (confirm("Are you sure?")) {
-							$.predictem.publish("rs/games/" + category + "/create",
-									{ category: category, name: $("#game #name").val(), description: $("#game #description").val() });
-							
-							// Clear the input values
-							$("#game #name").val("");
-							$("#game #description").val("");
-						}
-					});
+					// Subscribe to the atmosphere game broadcaster
+					$.predictem.subscribe("rs/game/" + id + "/subscribe", {
+						received: function(game) { prependGame(game); }});
 				}
 			});
 		</script>

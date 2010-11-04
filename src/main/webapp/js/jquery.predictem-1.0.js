@@ -12,10 +12,13 @@ function put(params) {
 
 jQuery.predictem = function() {
 	return {
-		subscribe: function(url, subscriber) {
+		subscribe: function(url, callbacks) {
 			var callback = function(response) {
-				if (response.responseBody != "" && response.state != "error" && response.state != "messagePublished") {
-					subscriber.received(JSON.parse(response.responseBody));
+				if (response.responseBody != "" && response.state != "error") {
+					if (response.state == "messageReceived")
+						callbacks.received(JSON.parse(response.responseBody));
+					if (response.state == "messagePublished")
+						callbacks.published(JSON.parse(response.responseBody));
 				}
 			};
 			

@@ -1,5 +1,6 @@
 package predictem.data;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,8 +24,9 @@ public class ObjectDatastore {
 	public Account createAccount(Account account) {
 		// Begin the transaction
 		this.em.getTransaction().begin();
-		// Generate a uuid to identify the account
+		// Generate a uuid to identify the account and set the creation date
 		account.setId(UUID.randomUUID().toString());
+		account.setCreationDate(new Date().getTime());
 		// Persist the account and commit the transaction
 		this.em.persist(account);
 		this.em.getTransaction().commit();
@@ -51,8 +53,9 @@ public class ObjectDatastore {
 	public Game createGame(Game game) {
 		// Begin the transaction
 		this.em.getTransaction().begin();
-		// Generate a uuid to identify the account
+		// Generate a uuid to identify the account and set the creation date
 		game.setId(UUID.randomUUID().toString());
+		game.setCreationDate(new Date().getTime());
 		// Persist the account and commit the transaction
 		this.em.persist(game);
 		this.em.getTransaction().commit();
@@ -73,5 +76,33 @@ public class ObjectDatastore {
 			queryGamesByCategory.setMaxResults(count);
 		
 		return queryGamesByCategory.getResultList();
+	}
+
+	public Question createQuestion(Question question) {
+		// Begin the transaction
+		this.em.getTransaction().begin();
+		// Generate a uuid to identify the account and set the creation date
+		question.setId(UUID.randomUUID().toString());
+		question.setCreationDate(new Date().getTime());
+		// Persist the account and commit the transaction
+		this.em.persist(question);
+		this.em.getTransaction().commit();
+		
+		return question;
+	}
+	
+	public List<Question> findQuestionsByGame(String gameId) {
+		return this.findQuestionsByGame(gameId, 0, Integer.MAX_VALUE);
+	}
+	
+	public List<Question> findQuestionsByGame(String gameId, int begin, int count) {
+		TypedQuery<Question> queryQuestionsByGame =
+			this.em.createNamedQuery("findQuestionsByGame", Question.class);
+		queryQuestionsByGame.setParameter("gameId", gameId);
+		queryQuestionsByGame.setFirstResult(begin);
+		if (count != Integer.MAX_VALUE)
+			queryQuestionsByGame.setMaxResults(count);
+		
+		return queryQuestionsByGame.getResultList();
 	}
 }
