@@ -5,13 +5,13 @@
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
 		<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="js/jquery.atmosphere-0.7.js"></script>
-		<script type="text/javascript" src="js/jquery.predictem-1.0.js"></script>
+		<script type="text/javascript" src="js/jquery.predictem.js"></script>
 		<script type="text/javascript">
-			function prependGame(game) {
+			function display(question) {
 				// Clone the game template and set the attributes and click handler
-				$("#game-template")
-					.tmpl({ game: game })
-					.prependTo("#games")
+				$("#question-template")
+					.tmpl({ question: question })
+					.prependTo("#questions")
 					.find("#join").click(function() {
 						alert($(this).parent().attr("id")); });
 			}
@@ -25,7 +25,7 @@
 				
 					// Subscribe to the atmosphere game broadcaster
 					$.predictem.subscribe("rs/game/" + id + "/subscribe", {
-						received: function(game) { prependGame(game); }});
+						received: function(question) { display(question); }});
 				}
 			});
 		</script>
@@ -38,12 +38,12 @@
 		</script>
 	</head>
 	<body>
-		<div id="game">
+		<div id="question">
 			<input id="name" type="text">
 			<input id="description" type="text">
 			<input id="create" type="button" value="Create">
 		</div>
-		<div id="games">
+		<div id="questions">
 		</div>
 	</body>
 </html>

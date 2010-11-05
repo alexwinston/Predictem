@@ -1,19 +1,25 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 	<head>
 		<meta name="viewport" content="width=320;" />
+		<style>
+			li { list-style-type:none; }
+		</style>
 		<!--link media="screen" rel="stylesheet" href="css/facebox.css" /-->
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
 		<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="js/jquery.atmosphere-0.7.js"></script>
-		<script type="text/javascript" src="js/jquery.predictem-1.0.js"></script>
+		<script type="text/javascript" src="js/jquery.predictem.js"></script>
 		<script type="text/javascript">
 			function display(game) {
 				// Initialize the game template and set the attributes and click handler
 				$("#game-template")
 					.tmpl({ game: game })
+					//.hide()
 					.prependTo("#games")
+					//.slideToggle()
 					.find("#join").click(function() {
-						alert($(this).parent().attr("id")); });
+						location.href = "game.html#" + $(this).closest("li").attr("id");
+					});
 			}
 			
 			$(document).ready(function() {
@@ -31,7 +37,9 @@
 					// Subscribe to the atmosphere lobby broadcaster
 					$.predictem.subscribe("rs/games/" + category + "/subscribe", {
 						received: display,
-						published: function(game) { location.href = "game.html#" + game.id; }});
+						published: function(game) {
+							//location.href = "game.html#" + game.id;
+						}});
 				
 					// Click handler to create games
 					$("#game #create").click(function() {
@@ -48,20 +56,28 @@
 			});
 		</script>
 		<script id="game-template" type="text/x-jquery-tmpl">
-			<div id="{{= game.id}}">
-				<span id="name">{{= game.name}}</span>
-				<span id="description">{{= game.description}}</span>
-				<input id="join" type="button" value="Join">
-			</div>
+			<li style="border:1px solid black;" id="{{= game.id}}">
+				<div style="display:table-cell; width:100%;">
+					<div id="name">{{= game.name}}</div>
+					<div id="description">{{= game.description}}</div>
+				</div>
+				<div style="display:table-cell; vertical-align:middle;">
+					<input id="join" type="button" value="Join">
+				</div>
+			</li>
 		</script>
 	</head>
 	<body>
-		<div id="game">
-			<input id="name" type="text">
-			<input id="description" type="text">
-			<input id="create" type="button" value="Create">
+		<div id="game" style="align:center; margin:0px auto; width:90%;">
+			<ul style="border:1px solid blue; padding:0px; text-align:left;">
+				<li><input style="width:100%;" id="name" type="text" placeholder="Name">
+				<li><textarea style="width:100%;" id="description" placeholder="Description"></textarea>
+				<li><input style="width:100%;" id="create" type="button" value="Create">
+			</ul>
 		</div>
-		<div id="games">
+		<div style="align:center; margin:0px auto; width:90%;">
+			<ul id="games" style="border:1px solid red; padding:0px; text-align:left;">
+			</ul>
 		</div>
 	</body>
 </html>
