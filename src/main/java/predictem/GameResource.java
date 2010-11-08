@@ -3,6 +3,7 @@ package predictem;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -14,7 +15,6 @@ import org.atmosphere.annotation.Suspend;
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.jersey.Broadcastable;
 
-import predictem.data.Game;
 import predictem.data.ObjectDatastore;
 import predictem.data.Question;
 
@@ -36,18 +36,18 @@ public class GameResource {
 	
 	// TODO: Check aid cookie and implement timestamp check to limit calls
 	@POST @Path("/question/create") @Consumes("application/json") @Broadcast @Produces("text/plain")
-	public Broadcastable pose(@PathParam("id") Broadcaster category, Question question) {
+	public Broadcastable create(@PathParam("id") Broadcaster category, @CookieParam("aid") String accountId, Question question) {
 		// Broadcast the creation of the new question
 		return new Broadcastable(
 				new GsonBuilder().create().toJson(this.create(question)), category);
 	}
 	
-	@GET @Path("/questions/{begin}/{count}") @Produces("application/json")
-	public List<Question> questions(@PathParam("id") String id, @PathParam("begin") int begin, @PathParam("count") int count) {
-		return this.datastore.findQuestionsByGame(id, begin, count);
+	@GET @Path("/questions") @Produces("application/json")
+	public List<Question> questions(@PathParam("id") String gameId) {
+		return this.datastore.findQuestionsByGame(gameId);
 	}
 	
 	private Question create(Question question) {
-		return this.datastore.createQuestion(question);
+		return this.datastore.create(question);
 	}
 }

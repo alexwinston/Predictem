@@ -1,4 +1,5 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!DOCTYPE html>
+<html>
 	<head>
 		<meta name="viewport" content="width=320;" />
 		<!--link media="screen" rel="stylesheet" href="css/facebox.css" /-->
@@ -19,29 +20,74 @@
 			$(document).ready(function() {
 				if (location.href.indexOf("#") != -1) {
 			        // Get the game id from the supplied hashtag
-			    	var id = location.href.substr(location.href.indexOf("#") + 1);
+			    	var gameId = location.href.substr(location.href.indexOf("#") + 1);
 			        
-			        // Load the most recently created questions
+			        // Load the game questions
+			        $.getJSON("rs/game/" + gameId + "/questions", function(games) {
+          				$.each(questions.reverse(), function(i, question) {
+          					display(question);
+          				});
+        			});
 				
 					// Subscribe to the atmosphere game broadcaster
-					$.predictem.subscribe("rs/game/" + id + "/subscribe", {
+					$.predictem.subscribe("rs/game/" + gameId + "/subscribe", {
 						received: function(question) { display(question); }});
+
+					// Click handlers for questions and choices
+					$("#question-add").click(function() {
+						if (confirm("Are you sure?")) {
+							var question = {
+									gameId: gameId,
+									description: $("#question-add-description").val(),
+									choices: []
+							};
+							$("input[name=choice-description]").each(function(i, choice) {
+								question.choices[i] = $(choice).val();
+							});
+							alert(JSON.stringify(question));
+							
+							//$.predictem.publish("rs/game/" + gameId + "/question/create", question);
+							
+							// Clear the input values
+							$("#game-add-description").val("");
+						}
+					});
+					
+					$("#choice-add").click(function() {
+						$("#choice-added-template")
+							.tmpl({ choice: { description: $("#choice-add-description").val() }})
+							.prependTo("#choices")
+							.find("#choice-delete").click(function() {
+								$(this).parent().remove();
+							});
+						// clear the input values
+						$("#choice-add-description").val("");
+					});
 				}
 			});
 		</script>
-		<script id="game-template" type="text/x-jquery-tmpl">
-			<div id="{{= game.id}}">
-				<span id="name">{{= game.name}}</span>
-				<span id="description">{{= game.description}}</span>
-				<input id="join" type="button" value="Join">
+		<script id="question-template" type="text/x-jquery-tmpl">
+			<div id="{{= question.id}}">
+				<input type="radio" name="choices" value="{{= choice.description}}">{{= choice.description}}
+			</div>
+		</script>
+		<script id="choice-added-template" type="text/x-jquery-tmpl">
+			<div id="choice">
+				<input name="choice-description" type="input" enabled="false" value="{{= choice.description}}">
+				<input id="choice-delete" type="button" value="-">
 			</div>
 		</script>
 	</head>
 	<body>
 		<div id="question">
-			<input id="name" type="text">
-			<input id="description" type="text">
-			<input id="create" type="button" value="Create">
+			<input id="question-add-description" type="text">?
+			<input id="question-add" type="button" value="Create">
+			<div>
+				<input id="choice-add-description" type="text" placeholder="Choice">
+				<input id="choice-add" type="button" value="+">
+			</div>
+			<div id="choices">
+			</div>
 		</div>
 		<div id="questions">
 		</div>

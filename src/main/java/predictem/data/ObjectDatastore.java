@@ -21,7 +21,7 @@ public class ObjectDatastore {
 		this.em = emf.createEntityManager();
 	}
 
-	public Account createAccount(Account account) {
+	public Account create(Account account) {
 		// Begin the transaction
 		this.em.getTransaction().begin();
 		// Generate a uuid to identify the account and set the creation date
@@ -50,7 +50,7 @@ public class ObjectDatastore {
 		return queryAccountByEmailAndPassword.getSingleResult();
 	}
 	
-	public Game createGame(Game game) {
+	public Game create(Game game) {
 		// Begin the transaction
 		this.em.getTransaction().begin();
 		// Generate a uuid to identify the account and set the creation date
@@ -78,7 +78,7 @@ public class ObjectDatastore {
 		return queryGamesByCategory.getResultList();
 	}
 
-	public Question createQuestion(Question question) {
+	public Question create(Question question) {
 		// Begin the transaction
 		this.em.getTransaction().begin();
 		// Generate a uuid to identify the account and set the creation date

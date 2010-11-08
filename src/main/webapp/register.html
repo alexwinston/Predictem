@@ -6,7 +6,7 @@
 			$(document).ready(function() {
 				$("#register").click(function() {
 					$.predictem.register($("#username").val(), $("#email").val(), $("#password").val(), {
-						success: function() { location.href = "lobby.html"; },
+						success: function() { location.href = "categories.html"; },
 						error: function() { alert("The email already exists"); }});
 				});
 				

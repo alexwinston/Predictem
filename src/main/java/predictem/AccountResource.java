@@ -42,7 +42,7 @@ public class AccountResource {
 			this.datastore.findAccountByEmail(account.getEmail());
 		} catch (NoResultException e) {
 			// The email doesn't exist so create the new account
-			this.datastore.createAccount(account);
+			this.datastore.create(account);
 			
 			// Create a new cookie with the account uuid for future requests
 			return Response.status(200).cookie(new NewCookie("aid", account.getId())).build();

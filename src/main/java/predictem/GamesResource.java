@@ -47,6 +47,6 @@ public class GamesResource {
 	}
 	
 	private Game create(Game game) {
-		return this.datastore.createGame(game);
+		return this.datastore.create(game);
 	}
 }

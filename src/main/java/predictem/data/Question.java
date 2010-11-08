@@ -2,6 +2,7 @@ package predictem.data;
 
 import java.util.List;
 
+import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
@@ -10,7 +11,7 @@ import javax.persistence.NamedQuery;
 			query="SELECT q FROM Question q WHERE q.gameId = :gameId ORDER BY q.creationDate DESC")
 })
 
-public class Question {
+@Entity public class Question {
 	private String id;
 	private String gameId;
 	private String description; 
