@@ -16,7 +16,7 @@ import javax.persistence.NamedQuery;
 	private String email;
 	private String username;
 	private String password;
-	private long creationDate;
+	private long createdDate;
 	
 	private Account() {}
 	
@@ -58,11 +58,11 @@ import javax.persistence.NamedQuery;
 		this.password = password;
 	}
 	
-	public long getCreationDate() {
-		return this.creationDate;
+	public long getCreatedDate() {
+		return this.createdDate;
 	}
 	
-	public void setCreationDate(long creationDate) {
-		this.creationDate = creationDate;
+	public void setCreatedDate(long createdDate) {
+		this.createdDate = createdDate;
 	}
 }

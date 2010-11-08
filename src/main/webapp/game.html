@@ -9,47 +9,48 @@
 		<script type="text/javascript" src="js/jquery.predictem.js"></script>
 		<script type="text/javascript">
 			function display(question) {
-				// Clone the game template and set the attributes and click handler
+				// Initialize the question template and set the attributes and click handlers
 				$("#question-template")
 					.tmpl({ question: question })
 					.prependTo("#questions")
-					.find("#join").click(function() {
-						alert($(this).parent().attr("id")); });
+					.find(":radio").click(function() {
+						$.question.guess(question, this, {
+							success: function() {} }) });
 			}
 			
 			$(document).ready(function() {
 				if (location.href.indexOf("#") != -1) {
 			        // Get the game id from the supplied hashtag
-			    	var gameId = location.href.substr(location.href.indexOf("#") + 1);
+			    	var game = location.href.substr(location.href.indexOf("#") + 1);
 			        
-			        // Load the game questions
-			        $.getJSON("rs/game/" + gameId + "/questions", function(games) {
+			       // TODO Load the game statistics and questions
+			        $.getJSON("rs/game/" + game + "/questions", function(questions) {
           				$.each(questions.reverse(), function(i, question) {
           					display(question);
           				});
+          				
+          				// Load the player guesses
+    			        $.getJSON("rs/game/" + game + "/guesses", function(guesses) {
+    			        	$.each(guesses, function(i, guess) {
+    			        		$("#" + guess.questionId + " :radio:nth(" + guess.choice + ")").attr("checked","checked");
+    			        	})
+            			});
         			});
-				
+
 					// Subscribe to the atmosphere game broadcaster
-					$.predictem.subscribe("rs/game/" + gameId + "/subscribe", {
+					$.predictem.subscribe("rs/game/" + game + "/subscribe", {
 						received: function(question) { display(question); }});
 
 					// Click handlers for questions and choices
 					$("#question-add").click(function() {
 						if (confirm("Are you sure?")) {
-							var question = {
-									gameId: gameId,
-									description: $("#question-add-description").val(),
-									choices: []
-							};
-							$("input[name=choice-description]").each(function(i, choice) {
-								question.choices[i] = $(choice).val();
-							});
-							alert(JSON.stringify(question));
-							
-							//$.predictem.publish("rs/game/" + gameId + "/question/create", question);
+							$.question.create($("#question"), game, {
+								success: function() { alert("Question was successfully posed"); },
+								error: function() { alert("There was an error with the submission of your question")} });
 							
 							// Clear the input values
-							$("#game-add-description").val("");
+							$("#question-add-description").val("");
+							$("#choices").empty();
 						}
 					});
 					
@@ -68,7 +69,10 @@
 		</script>
 		<script id="question-template" type="text/x-jquery-tmpl">
 			<div id="{{= question.id}}">
-				<input type="radio" name="choices" value="{{= choice.description}}">{{= choice.description}}
+				{{= question.description}}
+				{{each(i, choice) question.choices}}
+				<input type="radio" name="{{= question.id}}" value="{{= i}}">{{= choice}}
+				{{/each}}
 			</div>
 		</script>
 		<script id="choice-added-template" type="text/x-jquery-tmpl">

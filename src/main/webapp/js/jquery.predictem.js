@@ -1,6 +1,6 @@
-function put(params) {
+function post(params) {
 	$.ajax({
-		type : "PUT",
+		type : "POST",
 		url : params.url,
 		contentType : "application/json",
 		data : JSON.stringify(params.data),
@@ -32,7 +32,7 @@ jQuery.predictem = function() {
 					jQuery.atmosphere.request = { data: JSON.stringify(json) });
 		},
 		login: function(email, password, callbacks) {
-			put({
+			post({
 				url: "rs/account/login/",
 				data: {
    	   				"email": email,
@@ -43,12 +43,45 @@ jQuery.predictem = function() {
 			});
 		},
 		register: function(username, email, password, callbacks) {
-			put({
+			post({
    	   			url: "rs/account/register",
    	   			data: {
    	   				"username": username,
    	   				"email": email,
    	   				"password": password
+   	   			},
+   	   			success: function(response) { callbacks.success(response); },
+		   		error: function(response) { callbacks.error(response); }
+		   	});
+		}
+	}
+}();
+
+jQuery.question = function() {
+	return {
+		create: function(context, gameId, callbacks) {
+			var question = {
+					gameId: gameId,
+					description: $("#question-add-description", context).val(),
+					choices: []
+			};
+			$("input[name=choice-description]", context).each(function(i, choice) {
+				question.choices[i] = $(choice).val();
+			});
+			
+			jQuery.atmosphere.contentType = "application/json";
+			jQuery.atmosphere.response.push("rs/game/" + gameId + "/question", null,
+					// TODO Handle errors
+					jQuery.atmosphere.request = { data: JSON.stringify(question) });
+		},
+		guess: function(question, choice, callbacks) {
+			post({
+   	   			url: "rs/game/" + question.gameId + "/guess",
+   	   			data: {
+   	   				"gameId": question.gameId,
+   	   				"questionId": question.id,
+   	   				"accountId": question.accountId,
+   	   				"choice": $(choice).val()
    	   			},
    	   			success: function(response) { callbacks.success(response); },
 		   		error: function(response) { callbacks.error(response); }

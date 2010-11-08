@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
@@ -26,7 +27,7 @@ public class ObjectDatastore {
 		this.em.getTransaction().begin();
 		// Generate a uuid to identify the account and set the creation date
 		account.setId(UUID.randomUUID().toString());
-		account.setCreationDate(new Date().getTime());
+		account.setCreatedDate(new Date().getTime());
 		// Persist the account and commit the transaction
 		this.em.persist(account);
 		this.em.getTransaction().commit();
@@ -83,7 +84,7 @@ public class ObjectDatastore {
 		this.em.getTransaction().begin();
 		// Generate a uuid to identify the account and set the creation date
 		question.setId(UUID.randomUUID().toString());
-		question.setCreationDate(new Date().getTime());
+		question.setCreatedDate(new Date().getTime());
 		// Persist the account and commit the transaction
 		this.em.persist(question);
 		this.em.getTransaction().commit();
@@ -104,5 +105,53 @@ public class ObjectDatastore {
 			queryQuestionsByGame.setMaxResults(count);
 		
 		return queryQuestionsByGame.getResultList();
+	}
+
+	public Guess create(Guess guess) {
+		// Begin the transaction
+		this.em.getTransaction().begin();
+		// Generate a uuid to identify the account and set the creation date
+		guess.setId(UUID.randomUUID().toString());
+		// Persist the account and commit the transaction
+		this.em.persist(guess);
+		this.em.getTransaction().commit();
+		
+		return guess;
+	}
+	
+	public Guess createOrUpdate(Guess guess) {
+		try {
+			Guess update = this.findGuessByQuestion(guess.getQuestionId());
+			
+			// Begin the transaction
+			this.em.getTransaction().begin();
+			
+			update.setChoice(guess.getChoice());
+			
+			// Persist the guess and commit the transaction
+			this.em.persist(update);
+			this.em.getTransaction().commit();
+			
+			return update;
+		} catch (NoResultException e) {
+			return this.create(guess);
+		}
+	}
+	
+	public Guess findGuessByQuestion(String questionId) {
+		TypedQuery<Guess> queryGuessByQuestion =
+			this.em.createNamedQuery("findGuessByQuestion", Guess.class);
+		queryGuessByQuestion.setParameter("questionId", questionId);
+		
+		return queryGuessByQuestion.getSingleResult();
+	}
+	
+	public List<Guess> findGuessesByGameAndAccount(String gameId, String accountId) {
+		TypedQuery<Guess> queryGuessesByGameAndAccount =
+			this.em.createNamedQuery("findGuessesByGameAndAccount", Guess.class);
+		queryGuessesByGameAndAccount.setParameter("gameId", gameId);
+		queryGuessesByGameAndAccount.setParameter("accountId", accountId);
+		
+		return queryGuessesByGameAndAccount.getResultList();
 	}
 }

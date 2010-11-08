@@ -14,14 +14,14 @@ import javax.persistence.NamedQuery;
 @Entity public class Question {
 	private String id;
 	private String gameId;
+	private String accountId;
 	private String description; 
 	private List<String> choices;
 	private boolean answered;
 	private int answer;
 	private boolean timed;
 	private int timeLimit;
-	private String creationAccountId;
-	private long creationDate;
+	private long createdDate;
 	
 	public String getId() {
 		return id;
@@ -37,6 +37,14 @@ import javax.persistence.NamedQuery;
 	
 	public void setGameId(String gameId) {
 		this.gameId = gameId;
+	}
+	
+	public String getAccountId() {
+		return this.accountId;
+	}
+	
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
 	}
 	
 	public String getDescription() {
@@ -87,19 +95,11 @@ import javax.persistence.NamedQuery;
 		this.timeLimit = timeLimit;
 	}
 	
-	public String getCreationAccountId() {
-		return creationAccountId;
+	public long getCreatedDate() {
+		return createdDate;
 	}
 	
-	public void setCreationAccountId(String creationAccountId) {
-		this.creationAccountId = creationAccountId;
-	}
-	
-	public long getCreationDate() {
-		return creationDate;
-	}
-	
-	public void setCreationDate(long creationDate) {
-		this.creationDate = creationDate;
+	public void setCreatedDate(long creationDate) {
+		this.createdDate = creationDate;
 	}
 }
