@@ -50,6 +50,7 @@ public final class GsonProvider implements MessageBodyWriter<Object>, MessageBod
 
 	@Override
 	public Object readFrom(Class<Object> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, String> httpHeaders, InputStream entityStream) throws IOException, WebApplicationException {
+		// TODO Handle exceptions
 		return this.gson.fromJson(new InputStreamReader(entityStream), genericType);
 	} 
 

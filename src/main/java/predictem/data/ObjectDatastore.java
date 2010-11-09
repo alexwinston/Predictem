@@ -21,7 +21,7 @@ public class ObjectDatastore {
 	public ObjectDatastore() {
 		this.em = emf.createEntityManager();
 	}
-
+	
 	public Account create(Account account) {
 		// Begin the transaction
 		this.em.getTransaction().begin();
@@ -80,6 +80,8 @@ public class ObjectDatastore {
 	}
 
 	public Question create(Question question) {
+		// TODO check gameId and accountId are not null
+		
 		// Begin the transaction
 		this.em.getTransaction().begin();
 		// Generate a uuid to identify the account and set the creation date
@@ -90,6 +92,23 @@ public class ObjectDatastore {
 		this.em.getTransaction().commit();
 		
 		return question;
+	}
+	
+	public Question update(Question question) {
+		this.em.getTransaction().begin();
+		// Persist the question and commit the transaction
+		this.em.persist(question);
+		this.em.getTransaction().commit();
+		
+		return question;
+	}
+	
+	public Question findQuestionById(String id) {
+		TypedQuery<Question> queryQuestionById =
+			this.em.createNamedQuery("findQuestionById", Question.class);
+		queryQuestionById.setParameter("id", id);
+		
+		return queryQuestionById.getSingleResult();
 	}
 	
 	public List<Question> findQuestionsByGame(String gameId) {
@@ -121,7 +140,8 @@ public class ObjectDatastore {
 	
 	public Guess createOrUpdate(Guess guess) {
 		try {
-			Guess update = this.findGuessByQuestion(guess.getQuestionId());
+			Guess update = this.findGuessByQuestionAndAccount(
+					guess.getQuestionId(), guess.getAccountId());
 			
 			// Begin the transaction
 			this.em.getTransaction().begin();
@@ -138,20 +158,12 @@ public class ObjectDatastore {
 		}
 	}
 	
-	public Guess findGuessByQuestion(String questionId) {
-		TypedQuery<Guess> queryGuessByQuestion =
-			this.em.createNamedQuery("findGuessByQuestion", Guess.class);
-		queryGuessByQuestion.setParameter("questionId", questionId);
+	public Guess findGuessByQuestionAndAccount(String questionId, String accountId) {
+		TypedQuery<Guess> queryGuessByQuestionAndAccount =
+			this.em.createNamedQuery("findGuessByQuestionAndAccount", Guess.class);
+		queryGuessByQuestionAndAccount.setParameter("questionId", questionId);
+		queryGuessByQuestionAndAccount.setParameter("accountId", accountId);
 		
-		return queryGuessByQuestion.getSingleResult();
-	}
-	
-	public List<Guess> findGuessesByGameAndAccount(String gameId, String accountId) {
-		TypedQuery<Guess> queryGuessesByGameAndAccount =
-			this.em.createNamedQuery("findGuessesByGameAndAccount", Guess.class);
-		queryGuessesByGameAndAccount.setParameter("gameId", gameId);
-		queryGuessesByGameAndAccount.setParameter("accountId", accountId);
-		
-		return queryGuessesByGameAndAccount.getResultList();
+		return queryGuessByQuestionAndAccount.getSingleResult();
 	}
 }

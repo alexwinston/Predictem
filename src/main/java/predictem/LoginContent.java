@@ -1,6 +1,6 @@
 package predictem;
 
-public class Login {
+public class LoginContent {
 	private String email;
 	private String password;
 	

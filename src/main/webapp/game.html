@@ -2,51 +2,72 @@
 <html>
 	<head>
 		<meta name="viewport" content="width=320;" />
-		<!--link media="screen" rel="stylesheet" href="css/facebox.css" /-->
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
 		<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="js/jquery.atmosphere-0.7.js"></script>
 		<script type="text/javascript" src="js/jquery.predictem.js"></script>
 		<script type="text/javascript">
-			function display(question) {
+			function refresh(question) {
+				
+			}
+			
+			function received(question) {
+				// Update the question if it already exists and move it to the top
+				$("#" + question.id)		
+				
 				// Initialize the question template and set the attributes and click handlers
 				var questionTemplate =
 					$("#question-template").tmpl({ question: question });
-				
 				questionTemplate.prependTo("#questions");
-				questionTemplate.find(":radio").click(function() {
-					$.question.guess(question, this, {
-						success: function() {} });
+				
+				$.each(questionTemplate.find(":radio"), function(i, radio) {
+					var radioButton = $(radio);
+					radioButton.attr("disabled", true);
+					
+					if (!question.answered) {
+						radioButton.click(function() {
+							// Click handler that submits a guess when a radio button is selected
+							$.question.guess(question, i, {
+								success: function() {} });
+						});
+						radioButton.attr("disabled", false);
+					}
 				});
-				questionTemplate.find(":button").click(function() {
-					alert($(this).data("answer"));
+				// If a guess has been made check the corresponding radio button
+				if (question.guess)
+					$(":radio:nth(" + question.guess.choice + ")").attr("checked","checked");
+				
+				$.each(questionTemplate.find(":button"), function(i, button) {
+					$(button).hide();
+					
+					if (!question.answered && question.answerable) {
+						$(button).click(function() {
+							// Click handler that submits the answer for the corresponding choice
+							$.question.answer(question, i, {
+								success: function() {} });
+						}).show();
+					}
 				});
 			}
 			
 			$(document).ready(function() {
+				// TODO Check that aid cookie exists otherwise redirect to login
 				if (location.href.indexOf("#") != -1) {
 			        // Get the game id from the supplied hashtag
 			    	var game = location.href.substr(location.href.indexOf("#") + 1);
 			        
 			       // TODO Load the game statistics and questions
-			        $.getJSON("rs/game/" + game + "/questions", function(questions) {
+			        $.getJSON("rs/game/" + game + "/questions/" + $.cookie("aid"), function(questions) {
           				$.each(questions.reverse(), function(i, question) {
-          					display(question);
+          					received(question);
           				});
           				
-          				// Load the player guesses
-    			        $.getJSON("rs/game/" + game + "/guesses", function(guesses) {
-    			        	$.each(guesses, function(i, guess) {
-    			        		$("#" + guess.questionId + " :radio:nth(" + guess.choice + ")").attr("checked","checked");
-    			        	})
-            			});
+    					// Subscribe to the atmosphere game broadcaster
+    					$.predictem.subscribe("rs/game/" + game + "/subscribe", {
+    						received: function(question) { received(question); }});
         			});
 
-					// Subscribe to the atmosphere game broadcaster
-					$.predictem.subscribe("rs/game/" + game + "/subscribe", {
-						received: function(question) { display(question); }});
-
-					// Click handlers for questions and choices
+					// Click handlers for adding questions and choices
 					$("#question-add").click(function() {
 						if (confirm("Are you sure?")) {
 							$.question.create($("#question"), game, {
@@ -74,10 +95,11 @@
 		</script>
 		<script id="question-template" type="text/x-jquery-tmpl">
 			<div id="{{= question.id}}">
+				<div id="choices"></div>
 				{{= question.description}}
 				{{each(i, choice) question.choices}}
-				<input type="radio" name="{{= question.id}}" value="{{= i}}">{{= choice}}
-				<input type="button" data-answer="{{= i}}" value="Answer">
+					<input type="radio" name="{{= question.id}}">{{= choice}}
+					<input type="button" value="Answer">
 				{{/each}}
 			</div>
 		</script>

@@ -21,7 +21,7 @@ public class AccountResource {
 	}
 	
 	@POST @Path("/login") @Consumes(MediaType.APPLICATION_JSON)
-	public Response login(Login login) {
+	public Response login(LoginContent login) {
 		try {
 			// Check to see if the email already exists
 			Account account = this.datastore.findAccountByEmailAndPassword(
@@ -30,7 +30,7 @@ public class AccountResource {
 			// Create a new cookie with the account uuid for future requests
 			return Response.status(200).cookie(
 					new NewCookie(
-							new Cookie("aid", account.getId(), "/rs", "localhost"))).build();
+							new Cookie("aid", account.getId(), "/", ""))).build();
 			
 			// TODO Encapsulate NoResultException to eliminate JPA persistence dependency
 		} catch (NoResultException e) {
@@ -51,7 +51,7 @@ public class AccountResource {
 			// Create a new cookie with the account uuid for future requests
 			return Response.status(200).cookie(
 					new NewCookie(
-							new Cookie("aid", account.getId(), "/rs", "localhost"))).build();
+							new Cookie("aid", account.getId(), "/", ""))).build();
 		}
 		
 		// The email exists so return a 400 (Bad Request)

@@ -5,8 +5,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 @NamedQueries ({
-	@NamedQuery(name="findGuessByQuestion",
-			query="SELECT g FROM Guess g WHERE g.questionId = :questionId"),
+	@NamedQuery(name="findGuessByQuestionAndAccount",
+			query="SELECT g FROM Guess g WHERE g.questionId = :questionId AND g.accountId = :accountId"),
 	@NamedQuery(name="findGuessesByGameAndAccount",
 			query="SELECT g FROM Guess g WHERE g.gameId = :gameId AND g.accountId = :accountId"),
 })
