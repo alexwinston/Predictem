@@ -8,7 +8,7 @@ import javax.persistence.NamedQuery;
 
 @NamedQueries ({
 	@NamedQuery(name="findQuestionsByGame",
-			query="SELECT q FROM Question q WHERE q.gameId = :gameId ORDER BY q.creationDate DESC")
+			query="SELECT q FROM Question q WHERE q.gameId = :gameId ORDER BY q.createdDate DESC")
 })
 
 @Entity public class Question {

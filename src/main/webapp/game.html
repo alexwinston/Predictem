@@ -10,12 +10,17 @@
 		<script type="text/javascript">
 			function display(question) {
 				// Initialize the question template and set the attributes and click handlers
-				$("#question-template")
-					.tmpl({ question: question })
-					.prependTo("#questions")
-					.find(":radio").click(function() {
-						$.question.guess(question, this, {
-							success: function() {} }) });
+				var questionTemplate =
+					$("#question-template").tmpl({ question: question });
+				
+				questionTemplate.prependTo("#questions");
+				questionTemplate.find(":radio").click(function() {
+					$.question.guess(question, this, {
+						success: function() {} });
+				});
+				questionTemplate.find(":button").click(function() {
+					alert($(this).data("answer"));
+				});
 			}
 			
 			$(document).ready(function() {
@@ -72,6 +77,7 @@
 				{{= question.description}}
 				{{each(i, choice) question.choices}}
 				<input type="radio" name="{{= question.id}}" value="{{= i}}">{{= choice}}
+				<input type="button" data-answer="{{= i}}" value="Answer">
 				{{/each}}
 			</div>
 		</script>

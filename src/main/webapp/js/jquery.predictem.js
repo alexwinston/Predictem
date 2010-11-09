@@ -15,9 +15,9 @@ jQuery.predictem = function() {
 		subscribe: function(url, callbacks) {
 			var callback = function(response) {
 				if (response.responseBody != "" && response.state != "error") {
-					if (response.state == "messageReceived")
+					if (response.state == "messageReceived" && callbacks.received)
 						callbacks.received(JSON.parse(response.responseBody));
-					if (response.state == "messagePublished")
+					if (response.state == "messagePublished" && callbacks.published)
 						callbacks.published(JSON.parse(response.responseBody));
 				}
 			};
