@@ -10,6 +10,27 @@ function post(params) {
 	});
 }
 
+// Simple function to check if a selector returns an existing element
+jQuery.fn.exists = function() { return jQuery(this).length > 0; }
+
+var predictemController = {};
+predictemController.login = function(loginModel, callbacks) {
+	post({
+		url: "rs/account/login/",
+		data: loginModel,
+		success: function(response) { callbacks.success(response); },
+   		error: function(response) { callbacks.error(response); }
+	});
+};
+predictemController.register =	function(registrationModel, callbacks) {
+	post({
+		url: "rs/account/register",
+  		data: registrationModel,
+  		success: function(response) { callbacks.success(response); },
+   		error: function(response) { callbacks.error(response); }
+   	});
+};
+
 jQuery.predictem = function() {
 	return {
 		subscribe: function(url, callbacks) {
@@ -31,13 +52,10 @@ jQuery.predictem = function() {
 			jQuery.atmosphere.response.push(url, null,
 					jQuery.atmosphere.request = { data: JSON.stringify(json) });
 		},
-		login: function(email, password, callbacks) {
+		login: function(model, callbacks) {
 			post({
 				url: "rs/account/login/",
-				data: {
-   	   				"email": email,
-   	   				"password": password
-   	   			},
+				data: model,
 				success: function(response) { callbacks.success(response); },
 		   		error: function(response) { callbacks.error(response); }
 			});

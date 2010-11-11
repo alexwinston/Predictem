@@ -8,29 +8,32 @@
 		<script type="text/javascript" src="js/jquery.predictem.js"></script>
 		<script type="text/javascript">
 			function refresh(question) {
-				
+				// Update the question and move it to the top of the list
+				var questionDiv = $("#" + question.id);
+				questionDiv.prependTo("#questions");
 			}
 			
 			function received(question) {
-				// Update the question if it already exists and move it to the top
-				$("#" + question.id)		
+				// Refresh the question if it already exists, which means it has been answered
+				if($("#" + question.id).exists())
+					return refresh(question);
 				
 				// Initialize the question template and set the attributes and click handlers
-				var questionTemplate =
-					$("#question-template").tmpl({ question: question });
+				var questionTemplate = $("#question-template").tmpl({ question: question });
 				questionTemplate.prependTo("#questions");
 				
+				// Update 
 				$.each(questionTemplate.find(":radio"), function(i, radio) {
-					var radioButton = $(radio);
-					radioButton.attr("disabled", true);
+					var choiceRadio = $(radio);
+					choiceRadio.attr("disabled", true);
 					
 					if (!question.answered) {
-						radioButton.click(function() {
+						choiceRadio.click(function() {
 							// Click handler that submits a guess when a radio button is selected
 							$.question.guess(question, i, {
 								success: function() {} });
 						});
-						radioButton.attr("disabled", false);
+						choiceRadio.attr("disabled", false);
 					}
 				});
 				// If a guess has been made check the corresponding radio button
@@ -38,14 +41,16 @@
 					$(":radio:nth(" + question.guess.choice + ")").attr("checked","checked");
 				
 				$.each(questionTemplate.find(":button"), function(i, button) {
-					$(button).hide();
+					var answerButton = $(button);
+					answerButton.hide();
 					
 					if (!question.answered && question.answerable) {
-						$(button).click(function() {
+						answerButton.click(function() {
 							// Click handler that submits the answer for the corresponding choice
 							$.question.answer(question, i, {
 								success: function() {} });
-						}).show();
+						});
+						answerButton.show();
 					}
 				});
 			}

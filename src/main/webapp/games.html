@@ -9,7 +9,20 @@
 		<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="js/jquery.atmosphere-0.7.js"></script>
 		<script type="text/javascript" src="js/jquery.predictem.js"></script>
+		<script type="text/javascript" src="js/knockout-1.1.1.js"></script>
 		<script type="text/javascript">
+			var viewModel = {
+				gameCreate: {
+					name: ko.observable(""),
+					description: ko.observable("")
+				},
+				games: ko.observableArray([])
+			};
+			
+			viewModel.addGame = function(game) {
+				viewModel.games.push(game);
+			};
+			
 			function display(game) {
 				// Initialize the game template and set the attributes and click handler
 				$("#game-template")
@@ -24,13 +37,17 @@
 			
 			$(document).ready(function() {
 				if (location.href.indexOf("#") != -1) {
+					// Bind the model and the view
+					ko.applyBindings(viewModel);
+					
 			        // Get the category from the supplied hashtag
 			    	var category = location.href.substr(location.href.indexOf("#") + 1);
 			        
 			        // Load the most recently created games
 			        $.getJSON("rs/games/" + category + "/list/0/10", function(games) {
           				$.each(games.reverse(), function(i, game) {
-          					display(game);
+          					//display(game);
+          					viewModel.addGame(game);
           				});
         			});
 				
@@ -55,11 +72,11 @@
 				}
 			});
 		</script>
-		<script id="game-template" type="text/x-jquery-tmpl">
-			<li style="border:1px solid black;" id="{{= game.id}}">
+		<script id="gameTemplate" type="text/x-jquery-tmpl">
+			<li style="border:1px solid black;" id="${ id }">
 				<div style="display:table-cell; width:100%;">
-					<div id="name">{{= game.name}}</div>
-					<div id="description">{{= game.description}}</div>
+					<div id="name">${ name }</div>
+					<div id="description">${ description }</div>
 				</div>
 				<div style="display:table-cell; vertical-align:middle;">
 					<input id="join" type="button" value="Join">
@@ -76,7 +93,8 @@
 			</ul>
 		</div>
 		<div style="align:center; margin:0px auto; width:90%;">
-			<ul id="games" style="border:1px solid red; padding:0px; text-align:left;">
+			<ul style="border:1px solid red; padding:0px; text-align:left;"
+					data-bind='template: { name: "gameTemplate", data: games }'>
 			</ul>
 		</div>
 	</body>

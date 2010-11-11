@@ -2,17 +2,31 @@
 	<head>
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
 		<script type="text/javascript" src="js/jquery.predictem.js"></script>
+		<script type="text/javascript" src="js/knockout-1.1.1.js"></script>
 		<script>
+			var viewModel = {
+				email: ko.observable(""),
+				password: ko.observable("")
+			};
+			
+			// Methods
+			viewModel.loginClick = function() {
+				predictemController.login(ko.toJS(viewModel), {
+					success: function() { location.href = "categories.html"; },
+					error: function() { alert("Invalid email or password"); }});
+			}
+			
+			viewModel.registerClick = function() {
+				location.href = "register.html";
+			}
+			
+			this.validateModel = ko.dependentObservable(function () {
+		        return viewModel.email() != "" && viewModel.password() != "";
+		    }, viewModel);
+			
 			$(document).ready(function() {
-				$("#login").click(function() {
-					$.predictem.login($("#email").val(), $("#password").val(), {
-						success: function() { location.href = "categories.html"; },
-						error: function() { alert("Invalid email or password"); }});
-				});
-				
-				$("#register").click(function() {
-					location.href = "register.html";
-				});
+				// Bind the model and the view
+				ko.applyBindings(viewModel);
 			});
 		</script>
 	</head>
@@ -22,12 +36,12 @@
 		</div>
 		<div>
 			<ul style="border:1px solid blue; text-align:center;">
-				<li><input id="email" type="text" value="Email"></li>
-				<li><input id="password" type="text" value="Password"></li>
+				<li><input type="text" data-bind='value: email, valueUpdate: "afterkeydown"'></li>
+				<li><input type="text" data-bind='value: password, valueUpdate: "afterkeydown"'></li>
 			</ul>
 			<ul style="border:1px solid red; text-align:center;">
-				<li><input id="login" type="button" value="Sign In"></li>
-				<li><input id="register" type="button" value="Create New Account"></li>
+				<li><input type="button" data-bind="click: loginClick, enable: validateModel()" value="Sign In"></li>
+				<li><input type="button" data-bind="click: registerClick" value="Create New Account"></li>
 			</ul>
 		</div>
 	</body>
