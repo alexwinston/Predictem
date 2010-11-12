@@ -1,4 +1,5 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!DOCTYPE html>
+<html>
 	<head>
 		<meta name="viewport" content="width=320;" />
 		<style>
@@ -12,15 +13,20 @@
 		<script type="text/javascript" src="js/knockout-1.1.1.js"></script>
 		<script type="text/javascript">
 			var viewModel = {
-				gameCreate: {
+				gameToCreate: {
 					name: ko.observable(""),
-					description: ko.observable("")
+					description: ko.observable(""),
+					category: ""
 				},
 				games: ko.observableArray([])
 			};
 			
+			// Model event handlers
 			viewModel.addGame = function(game) {
 				viewModel.games.push(game);
+			};
+			viewModel.joinGame = function(game) {
+				location.href = "game.html#" + game.id;
 			};
 			
 			function display(game) {
@@ -37,6 +43,13 @@
 			
 			$(document).ready(function() {
 				if (location.href.indexOf("#") != -1) {
+					//$("#gamesList").data("bind", { template: { name: "gameTemplate", foreach: viewModel.games }});
+					//$("#gameJoinButton").data("bind", { click: function() { viewModel.joinGame() }});
+
+					// Model event binding
+					ko.bind("gamesList", { template: { name: "gameTemplate", foreach: viewModel.games }});
+					ko.bind("gameJoinButton", { click: function() { viewModel.joinGame(this); }});
+					
 					// Bind the model and the view
 					ko.applyBindings(viewModel);
 					
@@ -45,10 +58,11 @@
 			        
 			        // Load the most recently created games
 			        $.getJSON("rs/games/" + category + "/list/0/10", function(games) {
-          				$.each(games.reverse(), function(i, game) {
+			        	viewModel.games(games);
+          				//$.each(games.reverse(), function(i, game) {
           					//display(game);
-          					viewModel.addGame(game);
-          				});
+          					//viewModel.addGames(game);
+          				//});
         			});
 				
 					// Subscribe to the atmosphere lobby broadcaster
@@ -72,30 +86,28 @@
 				}
 			});
 		</script>
-		<script id="gameTemplate" type="text/x-jquery-tmpl">
-			<li style="border:1px solid black;" id="${ id }">
+		<script id="gameTemplate" type="text/html">
+			<li style="border:1px solid black;">
 				<div style="display:table-cell; width:100%;">
-					<div id="name">${ name }</div>
-					<div id="description">${ description }</div>
+					<div>${ name }</div>
+					<div>${ description }</div>
 				</div>
 				<div style="display:table-cell; vertical-align:middle;">
-					<input id="join" type="button" value="Join">
+					<button id="gameJoinButton" data-bind="">Join</button>
 				</div>
 			</li>
 		</script>
 	</head>
 	<body>
-		<div id="game" style="align:center; margin:0px auto; width:90%;">
+		<div style="align:center; margin:0px auto; width:90%;">
 			<ul style="border:1px solid blue; padding:0px; text-align:left;">
-				<li><input style="width:100%;" id="name" type="text" placeholder="Name">
-				<li><textarea style="width:100%;" id="description" placeholder="Description"></textarea>
-				<li><input style="width:100%;" id="create" type="button" value="Create">
+				<li><input style="width:100%;" type="text" placeholder="Name">
+				<li><textarea style="width:100%;" placeholder="Description"></textarea>
+				<li><input style="width:100%;" type="button" value="Create">
 			</ul>
 		</div>
 		<div style="align:center; margin:0px auto; width:90%;">
-			<ul style="border:1px solid red; padding:0px; text-align:left;"
-					data-bind='template: { name: "gameTemplate", data: games }'>
-			</ul>
+			<ul style="border:1px solid red; padding:0px; text-align:left;" id="gamesList" data-bind></ul>
 		</div>
 	</body>
 </html>

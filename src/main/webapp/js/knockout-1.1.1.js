@@ -945,6 +945,7 @@ ko.exportSymbol('ko.jsonExpressionRewriting.insertPropertyAccessorsIntoJson', ko
 (function () {
     var bindingAttributeName = "data-bind";
     ko.bindingHandlers = {};
+    ko.bindingElements = [];
 
     function parseBindingAttribute(attributeText, viewModel) {
         try {
@@ -979,7 +980,8 @@ ko.exportSymbol('ko.jsonExpressionRewriting.insertPropertyAccessorsIntoJson', ko
         new ko.dependentObservable(
             function () {
                 var evaluatedBindings = (typeof bindings == "function") ? bindings() : bindings;
-                parsedBindings = evaluatedBindings || parseBindingAttribute(node.getAttribute(bindingAttributeName), viewModel);
+                var elementBinding = ko.bindingElements[node.id];
+                parsedBindings = elementBinding || evaluatedBindings || parseBindingAttribute(node.getAttribute(bindingAttributeName), viewModel);
                 
                 // First run all the inits, so bindings can register for notification on changes
                 if (isFirstEvaluation) {
@@ -1001,6 +1003,10 @@ ko.exportSymbol('ko.jsonExpressionRewriting.insertPropertyAccessorsIntoJson', ko
         isFirstEvaluation = false;
     };
 
+    ko.bind = function(elementId, binding) {
+    	ko.bindingElements[elementId] = binding;
+    };
+    
     ko.applyBindings = function (viewModel, rootNode) {
         if (rootNode && (rootNode.nodeType == undefined))
             throw new Error("ko.applyBindings: first parameter should be your view model; second parameter should be a DOM node (note: this is a breaking change since KO version 1.05)");
@@ -1013,6 +1019,8 @@ ko.exportSymbol('ko.jsonExpressionRewriting.insertPropertyAccessorsIntoJson', ko
     };
     
     ko.exportSymbol('ko.bindingHandlers', ko.bindingHandlers);
+    ko.exportSymbol('ko.bindingElements', ko.bindingHandlers);
+    ko.exportSymbol('ko.bind', ko.bind);
     ko.exportSymbol('ko.applyBindings', ko.applyBindings);
 })();
 ko.bindingHandlers['click'] = {
