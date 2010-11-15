@@ -36,6 +36,9 @@ public class GamesResource {
 	// TODO: Check aid cookie and implement timestamp check to limit calls
 	@POST @Path("/create") @Consumes("application/json") @Broadcast @Produces("text/plain")
 	public Broadcastable create(@PathParam("category") Broadcaster category, Game game) {
+		// Set the category for the new game
+		game.setCategory(category.getID());
+		
 		// Broadcast the creation of the new game
 		return new Broadcastable(
 				new GsonBuilder().create().toJson(this.create(game)), category);

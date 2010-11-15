@@ -30,6 +30,9 @@ predictemController.register =	function(registrationModel, callbacks) {
    		error: function(response) { callbacks.error(response); }
    	});
 };
+predictemController.createGame = function(category, gameModel, callbacks) {
+	$.predictem.publish("rs/games/" + category + "/create", gameModel);
+};
 
 jQuery.predictem = function() {
 	return {

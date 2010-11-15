@@ -5,7 +5,6 @@
 		<style>
 			li { list-style-type:none; }
 		</style>
-		<!--link media="screen" rel="stylesheet" href="css/facebox.css" /-->
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
 		<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="js/jquery.atmosphere-0.7.js"></script>
@@ -16,77 +15,62 @@
 				gameToCreate: {
 					name: ko.observable(""),
 					description: ko.observable(""),
-					category: ""
 				},
+				gameCategory: ko.observable(""),
 				games: ko.observableArray([])
+			};
+
+			// Model subscribers
+			viewModel.gameCategory.subscribe(function(gameCategory) {
+		        // Load the most recently created games
+		        $.getJSON("rs/games/" + gameCategory + "/list/0/10", function(games) {
+		        	viewModel.games(games);
+    			});
+			
+				// Subscribe to the atmosphere game category broadcaster
+				$.predictem.subscribe("rs/games/" + gameCategory + "/subscribe", {
+					received: viewModel.addGame,
+					published: function(game) {
+						//location.href = "game.html#" + game.id;
+					}});
+			});
+
+			// Model methods
+			viewModel.addGame = function(game) {
+				viewModel.games.push(game);
 			};
 			
 			// Model event handlers
-			viewModel.addGame = function(game) {
-				viewModel.games.push(game);
+			viewModel.createGame = function() {
+				if (confirm("Are you sure?")) {
+					predictemController.createGame(
+							viewModel.gameCategory, ko.toJS(viewModel.gameToCreate));
+					
+					// Clear the input values
+					viewModel.gameToCreate.name("");
+					viewModel.gameToCreate.description("");
+				}
 			};
 			viewModel.joinGame = function(game) {
 				location.href = "game.html#" + game.id;
 			};
 			
-			function display(game) {
-				// Initialize the game template and set the attributes and click handler
-				$("#game-template")
-					.tmpl({ game: game })
-					//.hide()
-					.prependTo("#games")
-					//.slideToggle()
-					.find("#join").click(function() {
-						location.href = "game.html#" + $(this).closest("li").attr("id");
-					});
-			}
-			
 			$(document).ready(function() {
 				if (location.href.indexOf("#") != -1) {
-					//$("#gamesList").data("bind", { template: { name: "gameTemplate", foreach: viewModel.games }});
-					//$("#gameJoinButton").data("bind", { click: function() { viewModel.joinGame() }});
-
 					// Model event binding
 					ko.bind("gamesList", { template: { name: "gameTemplate", foreach: viewModel.games }});
+					ko.bind("gameCreateButton", { click: function() { viewModel.createGame(); }});
 					ko.bind("gameJoinButton", { click: function() { viewModel.joinGame(this); }});
 					
 					// Bind the model and the view
 					ko.applyBindings(viewModel);
-					
-			        // Get the category from the supplied hashtag
-			    	var category = location.href.substr(location.href.indexOf("#") + 1);
-			        
-			        // Load the most recently created games
-			        $.getJSON("rs/games/" + category + "/list/0/10", function(games) {
-			        	viewModel.games(games);
-          				//$.each(games.reverse(), function(i, game) {
-          					//display(game);
-          					//viewModel.addGames(game);
-          				//});
-        			});
-				
-					// Subscribe to the atmosphere lobby broadcaster
-					$.predictem.subscribe("rs/games/" + category + "/subscribe", {
-						received: display,
-						published: function(game) {
-							//location.href = "game.html#" + game.id;
-						}});
-				
-					// Click handler to create games
-					$("#game #create").click(function() {
-						if (confirm("Are you sure?")) {
-							$.predictem.publish("rs/games/" + category + "/create",
-									{ category: category, name: $("#game #name").val(), description: $("#game #description").val() });
-							
-							// Clear the input values
-							$("#game #name").val("");
-							$("#game #description").val("");
-						}
-					});
+
+					// Get the category from the supplied hashtag
+					viewModel.gameCategory(location.href.substr(location.href.indexOf("#") + 1));
 				}
 			});
 		</script>
-		<script id="gameTemplate" type="text/html">
+		<script type="text/html" id="gameTemplate">
 			<li style="border:1px solid black;">
 				<div style="display:table-cell; width:100%;">
 					<div>${ name }</div>
@@ -101,9 +85,9 @@
 	<body>
 		<div style="align:center; margin:0px auto; width:90%;">
 			<ul style="border:1px solid blue; padding:0px; text-align:left;">
-				<li><input style="width:100%;" type="text" placeholder="Name">
-				<li><textarea style="width:100%;" placeholder="Description"></textarea>
-				<li><input style="width:100%;" type="button" value="Create">
+				<li><input style="width:100%;" type="text" placeholder="Name" data-bind="value: gameToCreate.name">
+				<li><textarea style="width:100%;" placeholder="Description" data-bind="value: gameToCreate.description"></textarea>
+				<li><button style="width:100%;" id="gameCreateButton" data-bind>Create</button>
 			</ul>
 		</div>
 		<div style="align:center; margin:0px auto; width:90%;">
