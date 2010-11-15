@@ -37,14 +37,19 @@
 
 			// Model methods
 			viewModel.addGame = function(game) {
-				viewModel.games.push(game);
+				viewModel.games.unshift(game);
 			};
+			
+			// Model validation
+			viewModel.validateGameToCreate = ko.dependentObservable(function () {
+		        return viewModel.gameToCreate.name() != "" && viewModel.gameToCreate.description();
+		    }, viewModel);
 			
 			// Model event handlers
 			viewModel.createGame = function() {
 				if (confirm("Are you sure?")) {
 					predictemController.createGame(
-							viewModel.gameCategory, ko.toJS(viewModel.gameToCreate));
+							viewModel.gameCategory(), ko.toJS(viewModel.gameToCreate));
 					
 					// Clear the input values
 					viewModel.gameToCreate.name("");
@@ -59,7 +64,9 @@
 				if (location.href.indexOf("#") != -1) {
 					// Model event binding
 					ko.bind("gamesList", { template: { name: "gameTemplate", foreach: viewModel.games }});
-					ko.bind("gameCreateButton", { click: function() { viewModel.createGame(); }});
+					ko.bind("gameCreateButton", {
+						enable: viewModel.validateGameToCreate,
+						click: viewModel.createGame });
 					ko.bind("gameJoinButton", { click: function() { viewModel.joinGame(this); }});
 					
 					// Bind the model and the view
@@ -85,8 +92,8 @@
 	<body>
 		<div style="align:center; margin:0px auto; width:90%;">
 			<ul style="border:1px solid blue; padding:0px; text-align:left;">
-				<li><input style="width:100%;" type="text" placeholder="Name" data-bind="value: gameToCreate.name">
-				<li><textarea style="width:100%;" placeholder="Description" data-bind="value: gameToCreate.description"></textarea>
+				<li><input style="width:100%;" type="text" placeholder="Name" data-bind="value: gameToCreate.name, valueUpdate: 'afterkeydown'">
+				<li><textarea style="width:100%;" placeholder="Description" data-bind="value: gameToCreate.description, valueUpdate: 'afterkeydown'"></textarea>
 				<li><button style="width:100%;" id="gameCreateButton" data-bind>Create</button>
 			</ul>
 		</div>

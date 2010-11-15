@@ -16,7 +16,7 @@ jQuery.fn.exists = function() { return jQuery(this).length > 0; }
 var predictemController = {};
 predictemController.login = function(loginModel, callbacks) {
 	post({
-		url: "rs/account/login/",
+		url: "rs/account/login",
 		data: loginModel,
 		success: function(response) { callbacks.success(response); },
    		error: function(response) { callbacks.error(response); }

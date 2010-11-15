@@ -6,7 +6,58 @@
 		<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="js/jquery.atmosphere-0.7.js"></script>
 		<script type="text/javascript" src="js/jquery.predictem.js"></script>
+		<script type="text/javascript" src="js/knockout-1.1.1.js"></script>
 		<script type="text/javascript">
+			var questionModel = function(question) {
+				this.id = question.id;
+				this.gameId = question.gameId;
+				this.description = question.description;
+				this.guess = ko.observable("");
+				this.choices = question.choices;
+				
+				// Submit the choice whenever it changes
+			    this.guess.subscribe(function(newValue) {
+			    	alert(newValue);
+			    	//$.question.guess(question, i, { success: function() {} });
+			    });
+			};
+			
+			var viewModel = {
+				questionToCreate: {
+					description: ko.observable(""),
+					choices: ko.observableArray([])
+				},
+				gameId: ko.observable(""),
+				accountId: ko.observable(""),
+				questionModels: ko.observableArray([])
+			};
+						
+			// Model methods
+			viewModel.setQuestions = function(questions) {
+				for (i in questions)
+					viewModel.questionModels.push(new questionModel(questions[i]));
+			};
+			viewModel.addQuestion = function(question) {
+				viewModel.questionModels.unshift(new questionModel(question));
+			};
+
+			// Model subscribers
+			viewModel.gameId.subscribe(function(gameId) {
+		    	// TODO Load the game statistics and questions
+		    	$.getJSON("rs/game/" + gameId + "/questions/" + $.cookie("aid"), function(questions) {
+		    		viewModel.setQuestions(questions);
+	  				
+					// Subscribe to the atmosphere game broadcaster
+					$.predictem.subscribe("rs/game/" + gameId + "/subscribe", {
+						received: viewModel.addQuestion });
+				});
+			});
+			
+			// Model event handlers
+			viewModel.answerQuestion = function(question) {
+				
+			};
+		       
 			function refresh(question) {
 				// Update the question and move it to the top of the list
 				var questionDiv = $("#" + question.id);
@@ -58,19 +109,26 @@
 			$(document).ready(function() {
 				// TODO Check that aid cookie exists otherwise redirect to login
 				if (location.href.indexOf("#") != -1) {
+					// Model event binding
+					var test = function() {
+						return this.choices;
+					};
+					
+					ko.bind("questionsDiv", { template: { name: "questionTemplate", foreach: viewModel.questionModels }});
+					//ko.bind("choicesDiv", { template: { name: "choiceTemplate", foreach: function() { return test(); } }});
+					ko.bind("answerQuestionButton", { click: this.answerQuestion });
+					//ko.bind("choiceButton", { checked: this.choice });
+					
+					// Bind the model and the view
+					ko.applyBindings(viewModel);
+
+					// Get the category from the supplied hashtag
+					viewModel.gameId(location.href.substr(location.href.indexOf("#") + 1));
+					
 			        // Get the game id from the supplied hashtag
 			    	var game = location.href.substr(location.href.indexOf("#") + 1);
 			        
-			       // TODO Load the game statistics and questions
-			        $.getJSON("rs/game/" + game + "/questions/" + $.cookie("aid"), function(questions) {
-          				$.each(questions.reverse(), function(i, question) {
-          					received(question);
-          				});
-          				
-    					// Subscribe to the atmosphere game broadcaster
-    					$.predictem.subscribe("rs/game/" + game + "/subscribe", {
-    						received: function(question) { received(question); }});
-        			});
+
 
 					// Click handlers for adding questions and choices
 					$("#question-add").click(function() {
@@ -98,35 +156,34 @@
 				}
 			});
 		</script>
-		<script id="question-template" type="text/x-jquery-tmpl">
-			<div id="{{= question.id}}">
-				<div id="choices"></div>
-				{{= question.description}}
-				{{each(i, choice) question.choices}}
-					<input type="radio" name="{{= question.id}}">{{= choice}}
-					<input type="button" value="Answer">
-				{{/each}}
-			</div>
-		</script>
-		<script id="choice-added-template" type="text/x-jquery-tmpl">
+		<script type="text/html" id="choiceCreateTemplate">
 			<div id="choice">
 				<input name="choice-description" type="input" enabled="false" value="{{= choice.description}}">
 				<input id="choice-delete" type="button" value="-">
 			</div>
 		</script>
+		<script type="text/html" id="questionTemplate">
+			<div>
+				{{= description}}
+				{{each(i, choice) choices()}}
+					<input type="radio" data-bind="checked: guess" name="{{= $data.id}}" value="{{= i}}">{{= choice}}
+					<button id="answerQuestionButton">Answer</button>
+				{{/each}}
+			</div>
+		</script>
 	</head>
 	<body>
-		<div id="question">
+		<div id="questionCreateDiv">
 			<input id="question-add-description" type="text">?
 			<input id="question-add" type="button" value="Create">
 			<div>
 				<input id="choice-add-description" type="text" placeholder="Choice">
 				<input id="choice-add" type="button" value="+">
 			</div>
-			<div id="choices">
+			<div id="choicesCreateDiv">
 			</div>
 		</div>
-		<div id="questions">
+		<div id="questionsDiv" data-bind>
 		</div>
 	</body>
 </html>
